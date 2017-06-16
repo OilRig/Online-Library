@@ -1,0 +1,49 @@
+﻿@model IEnumerable<OnlineLibrary.Models.ReservViewModel>
+
+@{
+    ViewBag.Title = "AllReserves";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.BookName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UserName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Resolution)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.BookName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.UserName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Date)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Resolution)
+        </td>
+        <td>
+            @if (!item.Resolution)
+            {
+                @Html.ActionLink("Принять", "Accept", new { id = item.Id })
+            }
+            @Html.ActionLink("Отклонить", "Cancel", new { id=item.Id })
+        </td>
+    </tr>
+}
+
+</table>

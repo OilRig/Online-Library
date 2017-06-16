@@ -1,0 +1,58 @@
+﻿@model OnlineLibrary.Models.AllBooksViewModel
+@using OnlineLibrary.Helpers
+@{
+    ViewBag.Title = ViewBag.Genre;
+    Layout = "~/Views/Shared/_ForListBooks.cshtml";
+}
+
+
+@foreach (var book in Model.Books)
+{
+    <div class="well">
+        <div class="row">
+            <div class="pull-left col-xs-2">
+                @Html.Raw("<img style='width:140px; height:180px;' src=\"data:image/jpg;base64,"
+                + Convert.ToBase64String(book.Image) + "\" />")
+                <br /><br />
+                @if (book.Order == null)
+                {
+                    @Html.ActionLink("Забронировать", "MakeReserv", "Home", new { bookName = book.Name }, new { @class = "btn btn-primary" })
+                }
+                else if (book.Order == false && book.ReservUserName == User.Identity.Name)
+                {
+                    @Html.ActionLink("Отменить", "DelReserv", "Home", new { bookName = book.Name }, new { @class = "btn btn-danger" })
+                }
+                else if (book.Order == true && book.ReservUserName == User.Identity.Name)
+                {
+                    @Html.ActionLink("Одобрено", "AllBooks", "Home", new { bookName = book.Name }, new { @class = "btn btn-success" })
+                }
+                else
+                {
+                    @Html.ActionLink("Забронировано", "AllBooks", "Home", new { bookName = book.Name }, new { @class = "btn btn-danger" })
+                }
+            </div>
+            <div class="col-xs-10">
+                <h5>
+                    <strong>Название:</strong> @book.Name
+                </h5>
+                <h5>
+                    <strong>Автор:</strong> @book.Author
+                </h5>
+                <h5>
+                    <strong>Жанр:</strong> @book.Genre
+                </h5>
+                <h5>
+                    <strong>Издательство:</strong> @book.Publisher
+                </h5>
+                <h6>
+                    @book.Description
+                </h6>
+            </div>
+        </div>
+        <br />
+    </div>
+}
+<br />
+<div class="btn-group pull-right">
+    @Html.PageLinks(Model.PageInfo, x => Url.Action("List", "Home", new {genre = ViewBag.Genre, page = x }))
+</div>

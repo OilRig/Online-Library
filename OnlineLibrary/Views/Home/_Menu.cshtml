@@ -1,0 +1,9 @@
+﻿@model List<string>
+
+@Html.ActionLink("Все категории", "AllBooks", "Home", null, new {@class="btn btn-block btn-default btn-lg pull-right"})
+
+@foreach(var link in Model)
+{
+    @Html.RouteLink(link, new {   controller = "Home", action = "List", genre = link },
+    new { @class = "btn btn-block btn-default btn-lg pull-right" })
+}

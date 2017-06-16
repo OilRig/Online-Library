@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Online Library</title>
+    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-theme.css" rel="stylesheet" />
+    <script src="~/Scripts/modernizr-2.6.2.js"></script>
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            @Html.ActionLink("Главная", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            @Html.ActionLink("Книги", "AllBooks", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            @if (User.IsInRole("admin"))
+            {
+                @Html.ActionLink("Пользователи", "AllUsers", "Admin", new { area = "" }, new { @class = "navbar-brand"})
+            }
+            else if (User.IsInRole("librarian"))
+            {
+                @Html.ActionLink("Бронирования", "AllReserves", "Libraryan", new { area = "" }, new { @class = "navbar-brand" })
+                @Html.ActionLink("Редактор книг", "AllBooks", "Libraryan", new { area = "" }, new { @class = "navbar-brand" })
+                @Html.ActionLink("Категории", "AllGenres", "Libraryan", new { area = "" }, new { @class = "navbar-brand" })
+            }
+            @if (!User.Identity.IsAuthenticated)
+            {
+                @Html.ActionLink("Регистрация", "Register", "Account", new { area = "" }, new { @class = "navbar-brand navbar-right" })
+                @Html.ActionLink("Войти", "Login", "Account", new { area = "" }, new { @class = "navbar-brand navbar-right" })
+            }
+            else
+            {
+                @Html.ActionLink("Выйти", "LogOff", "Account", new { area = "" }, new { @class = "navbar-brand navbar-right" })
+                @Html.ActionLink(User.Identity.Name, "Profile", "Account", new { area = "" }, new { @class = "navbar-brand navbar-right" })
+            }
+            <div class="navbar-collapse collapse">
+            </div>
+        </div>
+    </div>
+
+    <div class="container body-content">
+        @RenderBody()
+    </div>
+
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+</body>
+</html>
