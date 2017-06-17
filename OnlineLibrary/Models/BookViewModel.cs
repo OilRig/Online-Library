@@ -11,7 +11,6 @@ namespace OnlineLibrary.Models
         [Required]
         [Display(Name = "Автор")]
         public string Author { get; set; }
-        [Required]
         [Display(Name = "Жанр")]
         public string Genre { get; set; }
         [Required]

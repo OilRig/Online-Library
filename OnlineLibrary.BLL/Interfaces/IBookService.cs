@@ -8,11 +8,11 @@ namespace OnlineLibrary.BLL.Interfaces
         void Create(BookDTO bookDto);
         void Delete(int id);
         void Update(BookDTO bookDto);
-        BookDTO GetBook(int? id);
-        List<BookDTO> GetBooks();
-        List<BookDTO> FindByGenre(string genre);
-        List<BookDTO> FindByAuthor(string authorName);
-        List<BookDTO> FindByPublisher(string publisher);
+        BookDTO GetBook(int id);
+        List<BookDTO> GetAllBooks();
+        List<BookDTO> FindBooksByGenre(string genre);
+        List<BookDTO> FindBooksByAuthor(string authorName);
+        List<BookDTO> FindBooksByPublisher(string publisher);
         void Dispose();
     }
 }

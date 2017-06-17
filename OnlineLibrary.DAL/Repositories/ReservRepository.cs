@@ -16,33 +16,7 @@ namespace OnlineLibrary.DAL.Repositories
         {
             db = context;
         }
-
-        public void Create(Reserv item)
-        {
-            db.Reserves.Add(item);
-        }
-
-        public void Delete(int id)
-        {
-            Reserv reserv = db.Reserves.Find(id);
-            if (reserv != null)
-                db.Reserves.Remove(reserv);
-        }
-        public IEnumerable<Reserv> FindByAuthor(string userName)
-        {
-            return db.Reserves.Where(r => r.UserName == userName);
-        }
-
-        public IEnumerable<Reserv> FindByGenre(string genre)
-        {
-            return null;
-        }
-
-        public Reserv FindByName(string bookName)
-        {
-            return db.Reserves.FirstOrDefault(r => r.BookName == bookName);
-        }
-        public Reserv Get(int? id)
+        public Reserv Get(int id)
         {
             return db.Reserves.Find(id);
         }
@@ -50,13 +24,27 @@ namespace OnlineLibrary.DAL.Repositories
         {
             return db.Reserves;
         }
+        public Reserv Find(Func<Reserv, bool> predicate)
+        {
+            return db.Reserves.FirstOrDefault(predicate);
+        }
+        public IEnumerable<Reserv> FindAll(Func<Reserv, bool> predicate)
+        {
+            return db.Reserves.Where(predicate);
+        }
+        public void Create(Reserv item)
+        {
+            db.Reserves.Add(item);
+        }
+        public void Delete(int id)
+        {
+            Reserv reserv = db.Reserves.Find(id);
+            if (reserv != null)
+                db.Reserves.Remove(reserv);
+        }
         public void Update(Reserv item)
         {
             db.Entry(item).State = EntityState.Modified;
-        }
-        public IEnumerable<Reserv> FindByPublisher(string publisher)
-        {
-            return null;
         }
     }
 }

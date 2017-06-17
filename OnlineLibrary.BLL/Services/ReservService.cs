@@ -32,19 +32,19 @@ namespace OnlineLibrary.BLL.Services
             Database.ReserveManager.Delete(id);
             Database.SaveAsync();
         }
-        public ReservDTO FindByBookName(string bookName)
+        public ReservDTO FindReservByBookName(string bookName)
         {
             Mapper.Initialize(cfg => cfg.CreateMap<Reserv, ReservDTO>());
-            ReservDTO reservDto = Mapper.Map<Reserv, ReservDTO>(Database.ReserveManager.FindByName(bookName));
+            ReservDTO reservDto = Mapper.Map<Reserv, ReservDTO>(Database.ReserveManager.Find(r=>r.BookName == bookName));
             return reservDto;
         }
-        public ReservDTO GetReserv(int? id)
+        public ReservDTO GetReserv(int id)
         {
             Mapper.Initialize(cfg => cfg.CreateMap<Reserv, ReservDTO>());
             ReservDTO reservDto = Mapper.Map<Reserv, ReservDTO>(Database.ReserveManager.Get(id));
             return reservDto;
         }
-        public List<ReservDTO> GetReserves()
+        public List<ReservDTO> GetAllReserves()
         {
             IEnumerable<Reserv> reserves = Database.ReserveManager.GetAll();
             Mapper.Initialize(cfg => cfg.CreateMap<Reserv, ReservDTO>());
@@ -53,11 +53,11 @@ namespace OnlineLibrary.BLL.Services
         }
         public bool? CheckReserv(string bookName)
         {
-            if(Database.ReserveManager.FindByName(bookName)==null)
+            if(Database.ReserveManager.Find(r=>r.BookName == bookName)==null)
             {
                 return null;
             }
-            else if(Database.ReserveManager.FindByName(bookName).Resolution == false)
+            else if(Database.ReserveManager.Find(r=>r.BookName == bookName).Resolution == false)
             {
                 return false;
             }

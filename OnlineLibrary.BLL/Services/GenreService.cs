@@ -21,38 +21,33 @@ namespace OnlineLibrary.BLL.Services
             Database.GenreManager.Create(genre);
             Database.SaveAsync();
         }
-
         public void Delete(int id)
         {
             Database.GenreManager.Delete(id);
             Database.SaveAsync();    
         }
-
-        public void Dispose()
-        {
-            Database.Dispose();
-        }
-
-        public GenreDTO GetGenre(int? id)
+        public GenreDTO GetGenre(int id)
         {
             Mapper.Initialize(cfg => cfg.CreateMap<Genre, GenreDTO>());
             GenreDTO genreDto = Mapper.Map<Genre, GenreDTO>(Database.GenreManager.Get(id));
             return genreDto;
         }
-
-        public List<GenreDTO> GetGenres()
+        public List<GenreDTO> GetAllGenres()
         {
             Mapper.Initialize(cfg => cfg.CreateMap<Genre, GenreDTO>());
             List<GenreDTO> genresDto = Mapper.Map<IEnumerable<Genre>, List<GenreDTO>>(Database.GenreManager.GetAll());
             return genresDto;
         }
-
         public void Update(GenreDTO genreDto)
         {
             Mapper.Initialize(cfg => cfg.CreateMap<GenreDTO, Genre>());
             Genre genre = Mapper.Map<GenreDTO, Genre>(genreDto);
             Database.GenreManager.Update(genre);
             Database.SaveAsync();
+        }
+        public void Dispose()
+        {
+            Database.Dispose();
         }
     }
 }

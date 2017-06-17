@@ -12,8 +12,8 @@ namespace OnlineLibrary.BLL.Interfaces
         void Create(GenreDTO genreDto);
         void Delete(int id);
         void Update(GenreDTO bookDto);
-        GenreDTO GetGenre(int? id);
-        List<GenreDTO> GetGenres();
+        GenreDTO GetGenre(int id);
+        List<GenreDTO> GetAllGenres();
         void Dispose();
     }
 }

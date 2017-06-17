@@ -39,7 +39,7 @@ namespace OnlineLibrary.Controllers
         }
         public ActionResult AllBooks()
         {
-            List<BookDTO> booksDTO = bookService.GetBooks();
+            List<BookDTO> booksDTO = bookService.GetAllBooks();
             Mapper.Initialize(cfg => cfg.CreateMap<BookDTO, BookViewModel>());
             var books = Mapper.Map<List<BookDTO>, List<BookViewModel>>(booksDTO);
             return View(books);
@@ -50,7 +50,7 @@ namespace OnlineLibrary.Controllers
             BookDTO bookDTO = bookService.GetBook(id);
             Mapper.Initialize(cfg => cfg.CreateMap<BookDTO, BookViewModel>());
             var book = Mapper.Map<BookDTO, BookViewModel>(bookDTO);
-            List<GenreDTO> genres = genreService.GetGenres();
+            List<GenreDTO> genres = genreService.GetAllGenres();
             string[] genresArray = new string[genres.Count-1];
             for (int i = 0; i < genres.Count-1; i++)
             {
@@ -65,12 +65,15 @@ namespace OnlineLibrary.Controllers
         {
             if (ModelState.IsValid)
             {
-                byte[] imageData = null;
-                using (var binaryReader = new BinaryReader(uploadImage.InputStream))
+                if (uploadImage != null)
                 {
-                    imageData = binaryReader.ReadBytes(uploadImage.ContentLength);
+                    byte[] imageData = null;
+                    using (var binaryReader = new BinaryReader(uploadImage.InputStream))
+                    {
+                        imageData = binaryReader.ReadBytes(uploadImage.ContentLength);
+                    }
+                    model.Image = imageData;
                 }
-                model.Image = imageData;
                 Mapper.Initialize(cfg => cfg.CreateMap<BookViewModel, BookDTO>());
                 BookDTO bookDto = Mapper.Map<BookViewModel, BookDTO>(model);
                 bookService.Update(bookDto);
@@ -85,7 +88,7 @@ namespace OnlineLibrary.Controllers
         [HttpGet]
         public ActionResult Create()
         {
-            List<GenreDTO> genres = genreService.GetGenres();
+            List<GenreDTO> genres = genreService.GetAllGenres();
             string[] genresArray = new string[genres.Count];
             for(int i = 0; i < genres.Count; i++)
             {
@@ -123,15 +126,18 @@ namespace OnlineLibrary.Controllers
         }
         public ActionResult AllReserves()
         {
-            IEnumerable<ReservDTO> reservs = reservService.GetReserves();
+            IEnumerable<ReservDTO> reservs = reservService.GetAllReserves();
             Mapper.Initialize(cfg => cfg.CreateMap<ReservDTO, ReservViewModel>());
             List<ReservViewModel> reserves = Mapper.Map<IEnumerable<ReservDTO>, List<ReservViewModel>>(reservs);
             return View(reserves);
         }
         public ActionResult Accept(int? id)
         {
-            ReservDTO reserv = reservService.GetReserv(id);
-            reservService.Update(reserv);
+            if (id != null)
+            {
+                ReservDTO reserv = reservService.GetReserv(Convert.ToInt32(id));
+                reservService.Update(reserv);
+            }
             return RedirectToAction("AllReserves", "Libraryan");
         }
         public async Task<ActionResult> Cancel(int id)
@@ -150,7 +156,7 @@ namespace OnlineLibrary.Controllers
         }
         public ActionResult AllGenres()
         {
-            return View(genreService.GetGenres());
+            return View(genreService.GetAllGenres());
         }
         [HttpGet]
         public ActionResult EditGenre(int id)

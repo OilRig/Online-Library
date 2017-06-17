@@ -15,21 +15,25 @@ namespace OnlineLibrary.DAL.Repositories
         {
             this.db = context;
         }
+        public Book Get(int id)
+        {
+            return db.Books.Find(id);
+        }
+        public IEnumerable<Book> GetAll()
+        {
+            return db.Books;
+        }
+        public Book Find(Func<Book, bool> predicate)
+        {
+            return db.Books.FirstOrDefault(predicate);
+        }
+        public IEnumerable<Book> FindAll(Func<Book, bool> predicate)
+        {
+            return db.Books.Where(predicate);
+        }
         public void Create(Book item)
         {
             db.Books.Add(item);
-        }
-        public IEnumerable<Book> FindByAuthor(string AuthorName)
-        {
-            return db.Books.Where(a => a.Author.Contains(AuthorName)).ToList();
-        }
-        public IEnumerable<Book> FindByPublisher(string publisher)
-        {
-            return db.Books.Where(a => a.Publisher.Contains(publisher)).ToList();
-        }
-        public Book FindByName(string BookName)
-        {
-            return db.Books.FirstOrDefault(b => b.Name == BookName);
         }
         public void Delete(int id)
         {
@@ -37,23 +41,9 @@ namespace OnlineLibrary.DAL.Repositories
             if (book != null)
                 db.Books.Remove(book);
         }
-        public Book Get(int? id)
-        {
-            return db.Books.Find(id);
-        }
-
-        public IEnumerable<Book> GetAll()
-        {
-            return db.Books;
-        }
         public void Update(Book item)
         {
             db.Entry(item).State = EntityState.Modified;
-        }
-
-        public IEnumerable<Book> FindByGenre(string genre)
-        {
-            return db.Books.Where(b => b.Genre == genre);
         }
     }
 }

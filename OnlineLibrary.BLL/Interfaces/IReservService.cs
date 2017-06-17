@@ -7,10 +7,10 @@ namespace OnlineLibrary.BLL.Interfaces
     {
         void Create(ReservDTO reservDto);
         void Delete(int id);
-        ReservDTO GetReserv(int? id);
-        List<ReservDTO> GetReserves();
+        ReservDTO GetReserv(int id);
+        List<ReservDTO> GetAllReserves();
         bool? CheckReserv(string bookName);
-        ReservDTO FindByBookName(string bookName);
+        ReservDTO FindReservByBookName(string bookName);
         void Update(ReservDTO reservDto);
         void Dispose();
     }

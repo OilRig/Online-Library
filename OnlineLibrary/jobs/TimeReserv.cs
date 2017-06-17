@@ -19,7 +19,7 @@ namespace OnlineLibrary.jobs
         }
         public void Execute(IJobExecutionContext context)
         {
-            List<ReservDTO> reserves = reservService.GetReserves();
+            List<ReservDTO> reserves = reservService.GetAllReserves();
             foreach(ReservDTO reserv in reserves)
             {
                 if (!reserv.Resolution && reserv.FinishDate <= DateTime.UtcNow)

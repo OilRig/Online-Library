@@ -3,7 +3,6 @@ using Microsoft.Owin.Security;
 using OnlineLibrary.BLL.DTO;
 using OnlineLibrary.BLL.Infrastructure;
 using OnlineLibrary.BLL.Interfaces;
-using OnlineLibrary.jobs;
 using OnlineLibrary.Models;
 using System.Collections.Generic;
 using System.Security.Claims;
@@ -38,6 +37,10 @@ namespace OnlineLibrary.Controllers
         }
         public ActionResult Login()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
         [HttpPost]
@@ -66,7 +69,6 @@ namespace OnlineLibrary.Controllers
         }
         public ActionResult Register()
         {
-            ReservSheduler.Start();
             return View();
         }
         [HttpPost]
@@ -141,7 +143,7 @@ namespace OnlineLibrary.Controllers
             {
                 Email = "some@mail.ru",
                 UserName = "some@mail.ru",
-                Password = "password",
+                Password = "deffolt",
                 Name = "Иконников Евгений Сергеевич",
                 Address = "ул. Спортивная, д.30, кв.75",
                 Role = "admin",

@@ -28,10 +28,11 @@ namespace OnlineLibrary.BLL.Services
         }
         public void Update(BookDTO bookDto)
         {
-            Book book = Database.BookManager.Get(bookDto.Id);
+            Book book = Database.BookManager.Find(b=>b.Id == bookDto.Id);
             book.Name = bookDto.Name;
             book.Author = bookDto.Author;
-            book.Genre = bookDto.Genre;
+            if(bookDto.Genre != null)
+                book.Genre = bookDto.Genre;
             book.Description = bookDto.Description;
             book.Publisher = bookDto.Publisher;
             if(bookDto.Image.Length != 0)
@@ -39,41 +40,41 @@ namespace OnlineLibrary.BLL.Services
             Database.BookManager.Update(book);
             Database.SaveAsync();
         }
-        public BookDTO GetBook(int? id)
+        public BookDTO GetBook(int id)
         {
             Mapper.Initialize(cfg => cfg.CreateMap<Book, BookDTO>());
             var bookDto = Mapper.Map<Book, BookDTO>(Database.BookManager.Get(id));
             return bookDto;
         }
-        public List<BookDTO> GetBooks()
+        public List<BookDTO> GetAllBooks()
         {
             IEnumerable<Book> books = Database.BookManager.GetAll();
             Mapper.Initialize(cfg => cfg.CreateMap<Book, BookDTO>());
             List<BookDTO> booksDto = Mapper.Map<IEnumerable<Book>, List<BookDTO>>(books);
             return booksDto;
         }
-        public BookDTO GetByName(string bookName)
+        public BookDTO FindBookByName(string bookName)
         {
             Mapper.Initialize(cfg => cfg.CreateMap<Book, BookDTO>());
-            BookDTO bookDto = Mapper.Map<Book, BookDTO>(Database.BookManager.FindByName(bookName));
+            BookDTO bookDto = Mapper.Map<Book, BookDTO>(Database.BookManager.Find(b=>b.Name == bookName));
             return bookDto;
         }
-        public List<BookDTO> FindByGenre(string genre)
+        public List<BookDTO> FindBooksByGenre(string genre)
         {
             Mapper.Initialize(cfg => cfg.CreateMap<Book, BookDTO>());
-            List<BookDTO> booksDto = Mapper.Map<IEnumerable<Book>, List<BookDTO>>(Database.BookManager.FindByGenre(genre));
+            List<BookDTO> booksDto = Mapper.Map<IEnumerable<Book>, List<BookDTO>>(Database.BookManager.FindAll(b=>b.Genre == genre));
             return booksDto;
         }
-        public List<BookDTO> FindByAuthor(string authorName)
+        public List<BookDTO> FindBooksByAuthor(string authorName)
         {
             Mapper.Initialize(cfg => cfg.CreateMap<Book, BookDTO>());
-            List<BookDTO> booksDto = Mapper.Map<IEnumerable<Book>, List<BookDTO>>(Database.BookManager.FindByAuthor(authorName));
+            List<BookDTO> booksDto = Mapper.Map<IEnumerable<Book>, List<BookDTO>>(Database.BookManager.FindAll(b=>b.Author == authorName));
             return booksDto;
         }
-        public List<BookDTO> FindByPublisher(string publisher)
+        public List<BookDTO> FindBooksByPublisher(string publisher)
         {
             Mapper.Initialize(cfg => cfg.CreateMap<Book, BookDTO>());
-            List<BookDTO> booksDto = Mapper.Map<IEnumerable<Book>, List<BookDTO>>(Database.BookManager.FindByPublisher(publisher));
+            List<BookDTO> booksDto = Mapper.Map<IEnumerable<Book>, List<BookDTO>>(Database.BookManager.FindAll(b=>b.Publisher == publisher));
             return booksDto;
         }
         public void Dispose()

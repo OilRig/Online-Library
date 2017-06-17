@@ -43,14 +43,14 @@ namespace OnlineLibrary.Controllers
         [Authorize]
         public ActionResult AllBooks(int page = 1)
         {
-            List<BookDTO> booksDto = bookService.GetBooks();
+            List<BookDTO> booksDto = bookService.GetAllBooks();
             Mapper.Initialize(cfg => cfg.CreateMap<BookDTO, BookViewModel>());
             List<BookViewModel> books = Mapper.Map<List<BookDTO>, List<BookViewModel>>(booksDto);
             foreach (BookViewModel book in books)
             {
                 book.Order = reservService.CheckReserv(book.Name);
-                if(reservService.FindByBookName(book.Name) != null)
-                    book.ReservUserName = reservService.FindByBookName(book.Name).UserName;
+                if(reservService.FindReservByBookName(book.Name) != null)
+                    book.ReservUserName = reservService.FindReservByBookName(book.Name).UserName;
             }
             int pageSize = 3;
             IEnumerable<BookViewModel> booksPerPages = books.Skip((page - 1) * pageSize).Take(pageSize);
@@ -61,14 +61,14 @@ namespace OnlineLibrary.Controllers
         public ActionResult List(string genre, int page = 1)
         {
             ViewBag.Genre = genre;
-            List<BookDTO> booksDto = bookService.FindByGenre(genre);
+            List<BookDTO> booksDto = bookService.FindBooksByGenre(genre);
             Mapper.Initialize(cfg => cfg.CreateMap<BookDTO, BookViewModel>());
             List<BookViewModel> books = Mapper.Map<List<BookDTO>, List<BookViewModel>>(booksDto);
             foreach (BookViewModel book in books)
             {
                 book.Order = reservService.CheckReserv(book.Name);
-                if(reservService.FindByBookName(book.Name) != null)
-                    book.ReservUserName = reservService.FindByBookName(book.Name).UserName;
+                if(reservService.FindReservByBookName(book.Name) != null)
+                    book.ReservUserName = reservService.FindReservByBookName(book.Name).UserName;
             }
             int pageSize = 3;
             IEnumerable<BookViewModel> booksPerPages = books.Skip((page - 1) * pageSize).Take(pageSize);
@@ -98,7 +98,7 @@ namespace OnlineLibrary.Controllers
         }
         public async Task<ActionResult> DelReserv(string bookName)
         {
-            ReservDTO reservDto = reservService.FindByBookName(bookName);
+            ReservDTO reservDto = reservService.FindReservByBookName(bookName);
             if (reservDto != null && User.Identity.Name == reservDto.UserName)
             {
                 IEnumerable<UserDTO> users =  UserService.AllUsers();
@@ -113,7 +113,7 @@ namespace OnlineLibrary.Controllers
         public PartialViewResult _Menu()
         {
             List<string> genresNames = new List<string>();
-            List<GenreDTO> genresDto = genreService.GetGenres();
+            List<GenreDTO> genresDto = genreService.GetAllGenres();
             for(int i = 0; i < genresDto.Count; i++)
             {
                 genresNames.Add(genresDto[i].Name);
@@ -128,36 +128,36 @@ namespace OnlineLibrary.Controllers
             List<BookViewModel> booksVM;
             if (author.Length > 0 && publisher.Length == 0)
             {
-                List<BookDTO> Books = bookService.FindByAuthor(author); 
+                List<BookDTO> Books = bookService.FindBooksByAuthor(author); 
                 Mapper.Initialize(cfg => cfg.CreateMap<BookDTO, BookViewModel>());
                 List<BookViewModel> books = Mapper.Map<List<BookDTO>, List<BookViewModel>>(Books);
                 booksVM = books;
             }
             else if(author.Length == 0 && publisher.Length > 0)
             {
-                List<BookDTO> Books = bookService.FindByPublisher(publisher);
+                List<BookDTO> Books = bookService.FindBooksByPublisher(publisher);
                 Mapper.Initialize(cfg => cfg.CreateMap<BookDTO, BookViewModel>());
                 List<BookViewModel> books = Mapper.Map<List<BookDTO>, List<BookViewModel>>(Books);
                 booksVM = books;
             }
             else if(author.Length > 0 && publisher.Length > 0)
             {
-                List<BookDTO> books = bookService.FindByAuthor(author);
+                List<BookDTO> books = bookService.FindBooksByAuthor(author);
                 Mapper.Initialize(cfg => cfg.CreateMap<BookDTO, BookViewModel>());
                 List<BookViewModel> booksAuthor = Mapper.Map<List<BookDTO>, List<BookViewModel>>(books);
                 booksVM = booksAuthor.Where(b => b.Publisher.Contains(publisher)).ToList();
             }
             else
             {
-                List<BookDTO> books = bookService.GetBooks();
+                List<BookDTO> books = bookService.GetAllBooks();
                 Mapper.Initialize(cfg => cfg.CreateMap<BookDTO, BookViewModel>());
                 booksVM = Mapper.Map<List<BookDTO>, List<BookViewModel>>(books);
             }
             foreach(BookViewModel book in booksVM)
             {
                 book.Order = reservService.CheckReserv(book.Name);
-                if (reservService.FindByBookName(book.Name) != null)
-                    book.ReservUserName = reservService.FindByBookName(book.Name).UserName;
+                if (reservService.FindReservByBookName(book.Name) != null)
+                    book.ReservUserName = reservService.FindReservByBookName(book.Name).UserName;
             }
             int pageSize = 3;
             IEnumerable<BookViewModel> booksPerPages = booksVM.Skip((page - 1) * pageSize).Take(pageSize);
