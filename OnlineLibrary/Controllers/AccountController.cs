@@ -143,7 +143,7 @@ namespace OnlineLibrary.Controllers
             {
                 Email = "some@mail.ru",
                 UserName = "some@mail.ru",
-                Password = "password",
+                Password = "passsword",
                 Name = "Иконников Евгений Сергеевич",
                 Address = "ул. Спортивная, д.30, кв.75",
                 Role = "admin",
