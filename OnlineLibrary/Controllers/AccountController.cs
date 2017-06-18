@@ -5,6 +5,8 @@ using OnlineLibrary.BLL.Infrastructure;
 using OnlineLibrary.BLL.Interfaces;
 using OnlineLibrary.Models;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
@@ -14,13 +16,6 @@ namespace OnlineLibrary.Controllers
 {
     public class AccountController : Controller
     {
-        IEmailService EmailService;
-        public AccountController()
-        { }
-        public AccountController(IEmailService emailServ)
-        {
-            EmailService = emailServ;
-        }
         private IUserService UserService
         {
             get
@@ -88,7 +83,29 @@ namespace OnlineLibrary.Controllers
                 };
                 OperationDetails operationDetails = await UserService.Create(userDto);
                 if (operationDetails.Succedeed)
+                {
+                    try
+                    {
+                        using (MailMessage message = new MailMessage("onlinelibrary17@mail.ru", model.Email))
+                        {
+                            message.Subject = "Доступ на сайт";
+                            message.Body = model.Password + "- ваш пароль для доступа на сайт!";
+                            using (SmtpClient client = new SmtpClient
+                            {
+                                EnableSsl = true,
+                                Host = "smtp.mail.ru",
+                                Port = 587,
+                                Credentials = new NetworkCredential("onlinelibrary17@mail.ru", "password123")
+                            })
+                            {
+                                await client.SendMailAsync(message);
+                            }
+                        }
+                    }
+                    catch
+                    { }
                     return RedirectToAction("Confirm", "Account");
+                }
                 else
                     ModelState.AddModelError(operationDetails.Property, operationDetails.Message);
             }
@@ -98,7 +115,6 @@ namespace OnlineLibrary.Controllers
         {
             return View();
         }
-        [Authorize]
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut();
@@ -110,15 +126,18 @@ namespace OnlineLibrary.Controllers
             return View();
         }
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ForgotPassword(string email)
         {
-            if (email.Length > 0)
+            if (ModelState.IsValid)
             {
-                var callbackUrl = Url.Action("ResetPassword", "Account", new { id = UserService.FindByEmail(email).Id },
-                    protocol: Request.Url.Scheme);
-                await EmailService.Send(email, "Сброс пароля", "Для завершения регистрации перейдите по ссылке: <a href=\"" + callbackUrl + "\">сменить пароль</a>");
+                UserDTO user = await UserService.FindByEmail(email);
+                if (user != null)
+                {
+                    string code = await UserService.GenerateTokenAsync(user.Id);
+                    string callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                    await UserService.SendEmail(user.Id, "Сброс пароля", "Для сброса пароля, перейдите по ссылке <a href=\"" + callbackUrl + "\">сбросить</a>");
+                }
             }
             return RedirectToAction("Index", "Home");
         }
@@ -133,6 +152,8 @@ namespace OnlineLibrary.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (UserService.FindById(model.Id) == null)
+                    HttpNotFound();
                 UserService.ResetPass(model.Id, model.Password);
             }
             return RedirectToAction("Login", "Account");

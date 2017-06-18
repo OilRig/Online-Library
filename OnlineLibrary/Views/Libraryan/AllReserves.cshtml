@@ -41,7 +41,7 @@
             {
                 @Html.ActionLink("Принять", "Accept", new { id = item.Id })
             }
-            @Html.ActionLink("Отклонить", "Cancel", new { id=item.Id })
+            @Html.ActionLink("Отклонить", "Cancel", new { id=item.Id, bookName = item.BookName })
         </td>
     </tr>
 }

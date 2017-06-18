@@ -1,12 +1,10 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
+using OnlineLibrary.BLL;
 using OnlineLibrary.BLL.Interfaces;
 using OnlineLibrary.BLL.Services;
 using Owin;
-using System;
-using System.Threading;
-using OnlineLibrary.jobs;
 
 [assembly: OwinStartup(typeof(OnlineLibrary.App_Start.Startup))]
 
@@ -17,7 +15,7 @@ namespace OnlineLibrary.App_Start
         IServiceCreator serviceCreator = new ServiceCreator();
         public void Configuration(IAppBuilder app)
         {
-            app.CreatePerOwinContext<IUserService>(CreateUserService);
+            app.CreatePerOwinContext(CreateUserService);
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,

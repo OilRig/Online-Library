@@ -57,8 +57,8 @@ namespace OnlineLibrary.BLL.Services
         public void ResetPass(string id, string newPass)
         {
             LibraryUser user = Database.UserManager.FindById(id);
-            user.PasswordHash = Database.UserManager.PasswordHasher.HashPassword(newPass);
-            Database.SaveAsync();
+                user.PasswordHash = Database.UserManager.PasswordHasher.HashPassword(newPass);
+                Database.SaveAsync();
         }
         public string FindId(UserDTO userDto)
         {
@@ -124,6 +124,19 @@ namespace OnlineLibrary.BLL.Services
             Mapper.Initialize(cfg => cfg.CreateMap<LibraryUser, UserDTO>());
             UserDTO UserDto = Mapper.Map<LibraryUser, UserDTO>(user);
             return UserDto;
+        }
+        public async Task<string> GenerateTokenAsync(string id)
+        {
+            return await Database.UserManager.GeneratePasswordResetTokenAsync(id);
+        }
+        public async Task SendEmail(string userId, string subject, string body)
+        {
+            try
+            {
+                await Database.UserManager.SendEmailAsync(userId, subject, body);
+            }
+            catch
+            { }
         }
         public void Dispose()
         {

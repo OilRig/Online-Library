@@ -28,7 +28,6 @@ namespace OnlineLibrary.Util
             kernel.Bind<IReservService>().To<ReservService>();
             kernel.Bind<IBookService>().To<BookService>();
             kernel.Bind<IGenreService>().To<GenreService>();
-            kernel.Bind<IEmailService>().To<EmailService>();
         }
     }
 }

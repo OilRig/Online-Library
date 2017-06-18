@@ -18,7 +18,6 @@ namespace OnlineLibrary.Controllers
         IReservService reservService;
         IBookService bookService;
         IGenreService genreService;
-        IEmailService EmailService;
         private IUserService UserService
         {
             get
@@ -30,9 +29,8 @@ namespace OnlineLibrary.Controllers
         {
 
         }
-        public LibraryanController(IReservService serv, IBookService bookserv, IGenreService genreServ, IEmailService emailServ)
+        public LibraryanController(IReservService serv, IBookService bookserv, IGenreService genreServ)
         {
-            EmailService = emailServ;
             genreService = genreServ;
             reservService = serv;
             bookService = bookserv;
@@ -45,20 +43,24 @@ namespace OnlineLibrary.Controllers
             return View(books);
         }
         [HttpGet]
-        public ActionResult Edit(int id)
+        public ActionResult Edit(int? id)
         {
-            BookDTO bookDTO = bookService.GetBook(id);
-            Mapper.Initialize(cfg => cfg.CreateMap<BookDTO, BookViewModel>());
-            var book = Mapper.Map<BookDTO, BookViewModel>(bookDTO);
-            List<GenreDTO> genres = genreService.GetAllGenres();
-            string[] genresArray = new string[genres.Count-1];
-            for (int i = 0; i < genres.Count-1; i++)
+            if (id != null)
             {
-                if(genres[i].Name != book.Genre)
-                    genresArray[i] = genres[i].Name;
+                BookDTO bookDTO = bookService.GetBook(Convert.ToInt32(id));
+                Mapper.Initialize(cfg => cfg.CreateMap<BookDTO, BookViewModel>());
+                var book = Mapper.Map<BookDTO, BookViewModel>(bookDTO);
+                List<GenreDTO> genres = genreService.GetAllGenres();
+                List<string> genresNames = new List<string>();
+                foreach(GenreDTO genre in genres)
+                {
+                    if (genre.Name != book.Genre)
+                        genresNames.Add(genre.Name);
+                }
+                ViewBag.Genres = genresNames;
+                return View(book);
             }
-            ViewBag.Genres = genresArray;
-            return View(book);
+            return RedirectToAction("AllBooks", "Libraryan");
         }
         [HttpPost]
         public ActionResult Edit(BookViewModel model, HttpPostedFileBase uploadImage)
@@ -140,18 +142,10 @@ namespace OnlineLibrary.Controllers
             }
             return RedirectToAction("AllReserves", "Libraryan");
         }
-        public async Task<ActionResult> Cancel(int id)
+        public async Task<ActionResult> Cancel(int id, string bookName)
         {
-            ReservDTO reserv = reservService.GetReserv(id);
-            if (reserv != null)
-            {
-                IEnumerable<UserDTO> users = UserService.AllUsers();
-                foreach(UserDTO user in users)
-                {
-                    await EmailService.Send(user.Email ,"Книга доступна", reserv.BookName + "- доступна для бронирования!");
-                } 
-                reservService.Delete(id);
-            }
+            if(reservService.GetReserv(id)!=null)
+                await reservService.Delete(id, bookName);
             return RedirectToAction("AllReserves", "Libraryan");
         }
         public ActionResult AllGenres()

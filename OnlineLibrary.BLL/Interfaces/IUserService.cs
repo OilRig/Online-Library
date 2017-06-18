@@ -20,5 +20,7 @@ namespace OnlineLibrary.BLL.Interfaces
         ClientProfile FindProfile(string id);
         Task<bool> DeleteUser(string email);
         Task<UserDTO> FindByEmail(string email);
+        Task<string> GenerateTokenAsync(string id);
+        Task SendEmail(string userId, string subject, string body);
     }
 }

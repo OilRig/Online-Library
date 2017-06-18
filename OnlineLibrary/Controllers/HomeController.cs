@@ -17,7 +17,6 @@ namespace OnlineLibrary.Controllers
         IReservService reservService;
         IBookService bookService;
         IGenreService genreService;
-        IEmailService EmailService;
         private IUserService UserService
         {
             get
@@ -29,9 +28,8 @@ namespace OnlineLibrary.Controllers
         {
                 
         }
-        public HomeController(IReservService serv, IBookService bookserv, IGenreService genreserv, IEmailService emailServ)
+        public HomeController(IReservService serv, IBookService bookserv, IGenreService genreserv)
         {
-            EmailService = emailServ;
             genreService = genreserv;
             reservService = serv;
             bookService = bookserv;
@@ -100,14 +98,7 @@ namespace OnlineLibrary.Controllers
         {
             ReservDTO reservDto = reservService.FindReservByBookName(bookName);
             if (reservDto != null && User.Identity.Name == reservDto.UserName)
-            {
-                IEnumerable<UserDTO> users =  UserService.AllUsers();
-                foreach(UserDTO user in users)
-                {
-                   await EmailService.Send(user.Email, "Книга доступна", bookName + " снова доступна для бронирования!");
-                }
-                reservService.Delete(reservDto.Id);
-            }
+                await reservService.Delete(reservDto.Id, bookName);
             return RedirectToAction("AllBooks", "Home");
         }
         public PartialViewResult _Menu()

@@ -4,8 +4,6 @@
     ViewBag.Title = "Поиск";
     Layout = "~/Views/Shared/_ForListBooks.cshtml";
 }
-
-
 @foreach (var book in Model.Books)
 {
     <div class="well">
@@ -51,6 +49,11 @@
         </div>
         <br />
     </div>
+}
+@if(Model.Books.Count() == 0)
+{
+    <br/>
+    <h4>По вашему запросу ничего не найдено!</h4>
 }
 <br />
 <div class="btn-group pull-right">

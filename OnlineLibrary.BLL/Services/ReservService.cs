@@ -5,6 +5,10 @@ using OnlineLibrary.BLL.DTO;
 using AutoMapper;
 using System.Collections.Generic;
 using System;
+using System.Net.Mail;
+using System.Net;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace OnlineLibrary.BLL.Services
 {
@@ -27,10 +31,34 @@ namespace OnlineLibrary.BLL.Services
             Database.ReserveManager.Create(reserv);
             Database.SaveAsync();
         }
-        public void Delete(int id)
+        public async Task Delete(int id, string bookName)
         {
+            List<LibraryUser> users = Database.UserManager.Users.ToList();
+            foreach (LibraryUser user in users)
+            {
+                try
+                {
+                    MailMessage message = new MailMessage("onlinelibrary17@mail.ru", user.Email);
+                    message.Subject = "Доступна книга";
+                    message.Body = bookName + "- доступна для бронирования!";
+                    using (SmtpClient client = new SmtpClient
+                    {
+                        EnableSsl = true,
+                        Host = "smtp.mail.ru",
+                        Port = 587,
+                        Credentials = new NetworkCredential("onlinelibrary17@mail.ru", "password123")
+                    })
+                    {
+                        await client.SendMailAsync(message);
+                    }
+                }
+                catch
+                {
+                    
+                }
+            }
             Database.ReserveManager.Delete(id);
-            Database.SaveAsync();
+            await Database.SaveAsync();
         }
         public ReservDTO FindReservByBookName(string bookName)
         {
