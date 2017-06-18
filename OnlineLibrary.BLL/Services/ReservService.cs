@@ -95,13 +95,17 @@ namespace OnlineLibrary.BLL.Services
         {
             Database.Dispose();
         }
-        public void Update(ReservDTO reservDto)
+        public void Update(int id)
         {
-            Reserv reserv = Database.ReserveManager.Get(reservDto.Id);
-            reserv.Date = DateTime.Now;
-            reserv.Resolution = true;
-            Database.ReserveManager.Update(reserv);
-            Database.SaveAsync();
+            Reserv reserv = Database.ReserveManager.Get(id);
+            if (reserv != null)
+            {
+                reserv.Date = DateTime.UtcNow;
+                reserv.Resolution = true;
+                reserv.FinishDate = DateTime.UtcNow.AddMonths(3);
+                Database.ReserveManager.Update(reserv);
+                Database.SaveAsync();
+            }
         }
     }
 }

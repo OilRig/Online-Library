@@ -12,7 +12,7 @@ namespace OnlineLibrary.BLL.Interfaces
         List<ReservDTO> GetAllReserves();
         bool? CheckReserv(string bookName);
         ReservDTO FindReservByBookName(string bookName);
-        void Update(ReservDTO reservDto);
+        void Update(int id);
         void Dispose();
     }
 }

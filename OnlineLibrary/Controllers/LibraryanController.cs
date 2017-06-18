@@ -121,9 +121,10 @@ namespace OnlineLibrary.Controllers
             }
             return View();
         }
-        public ActionResult Delete(int id)
+        public ActionResult Delete(int? id)
         {
-            bookService.Delete(id);
+            if (id != null)
+                bookService.Delete(Convert.ToInt32(id));
             return RedirectToAction("AllBooks", "Libraryan");
         }
         public ActionResult AllReserves()
@@ -137,15 +138,14 @@ namespace OnlineLibrary.Controllers
         {
             if (id != null)
             {
-                ReservDTO reserv = reservService.GetReserv(Convert.ToInt32(id));
-                reservService.Update(reserv);
+                reservService.Update(Convert.ToInt32(id));
             }
             return RedirectToAction("AllReserves", "Libraryan");
         }
-        public async Task<ActionResult> Cancel(int id, string bookName)
+        public async Task<ActionResult> Cancel(int? id, string bookName)
         {
-            if(reservService.GetReserv(id)!=null)
-                await reservService.Delete(id, bookName);
+            if(reservService.GetReserv(Convert.ToInt32(id))!=null)
+                await reservService.Delete(Convert.ToInt32(id), bookName);
             return RedirectToAction("AllReserves", "Libraryan");
         }
         public ActionResult AllGenres()
@@ -153,10 +153,14 @@ namespace OnlineLibrary.Controllers
             return View(genreService.GetAllGenres());
         }
         [HttpGet]
-        public ActionResult EditGenre(int id)
+        public ActionResult EditGenre(int? id)
         {
-            GenreDTO genre = genreService.GetGenre(id);
-            return View(genre);
+            if (id != null)
+            {
+                GenreDTO genre = genreService.GetGenre(Convert.ToInt32(id));
+                return View(genre);
+            }
+            return RedirectToAction("AllGenres", "Libraryan");
         }
         [HttpPost]
         public ActionResult EditGenre(GenreDTO model)
@@ -172,9 +176,10 @@ namespace OnlineLibrary.Controllers
             }
             return View();
         }
-        public ActionResult DeleteGenre(int id)
+        public ActionResult DeleteGenre(int? id)
         {
-            genreService.Delete(id);
+            if (id != null)
+                genreService.Delete(Convert.ToInt32(id));
             return RedirectToAction("AllGenres", "Libraryan");
         }
         [HttpGet]

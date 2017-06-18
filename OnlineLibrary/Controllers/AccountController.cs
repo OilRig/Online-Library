@@ -162,11 +162,11 @@ namespace OnlineLibrary.Controllers
         {
             await UserService.SetInitialData(new UserDTO
             {
-                Email = "some@mail.ru",
-                UserName = "some@mail.ru",
+                Email = "zzzz@mail.ru",
+                UserName = "zzzz@mail.ru",
                 Password = "password",
                 Name = "Иконников Евгений Сергеевич",
-                Address = "ул. Спортивная, д.30, кв.75",
+                Address = "ул. Казанская, д.30, кв.75",
                 Role = "admin",
             }, new List<string> { "user", "librarian", "admin" });
         }

@@ -12,6 +12,8 @@ namespace OnlineLibrary.Models
         public string UserName { get; set; }
         [Display(Name ="Дана бронирования")]
         public DateTime Date { get; set; }
+        [Display(Name = "Дана окончания брони")]
+        public DateTime FinishDate { get; set; }
         [Display(Name ="Выдача")]
         public bool Resolution { get; set; }
     }
